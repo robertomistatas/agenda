@@ -54,15 +54,13 @@ const Login: React.FC = () => {
       >
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                    d="M8 7V3a4 4 0 118 0v4M5 7h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z" />
-            </svg>
+          <div className="mx-auto mb-4 flex justify-center">
+            <img 
+              src="/mistatas-logo.png" 
+              alt="MisTatas" 
+              className="h-12 w-auto"
+            />
           </div>
-          <h1 className="text-2xl font-bold text-primary mb-2">
-            Mistatas
-          </h1>
           <p className="text-lg text-gray-600">
             Agenda Empresarial
           </p>
