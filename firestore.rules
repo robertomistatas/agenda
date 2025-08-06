@@ -1,0 +1,38 @@
+// Reglas de Firestore para Mistatas Agenda
+// Ve a Firebase Console > Firestore Database > Rules y reemplaza el contenido con esto:
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Regla para la colección de eventos
+    match /events/{eventId} {
+      // Permitir lectura si el usuario está autenticado y es el dueño del documento
+      allow read: if request.auth != null && 
+                     request.auth.uid == resource.data.userId;
+      
+      // Permitir escritura si el usuario está autenticado y es el dueño del documento
+      allow update, delete: if request.auth != null && 
+                            request.auth.uid == resource.data.userId;
+      
+      // Permitir crear si el usuario está autenticado y el userId coincide
+      allow create: if request.auth != null && 
+                    request.auth.uid == request.resource.data.userId &&
+                    request.resource.data.keys().hasAll(['title', 'client', 'date', 'time', 'userId']);
+    }
+    
+    // Regla para la colección de usuarios
+    match /users/{userId} {
+      // Solo el propio usuario puede acceder a sus datos
+      allow read, write: if request.auth != null && 
+                         request.auth.uid == userId;
+    }
+  }
+}
+
+// INSTRUCCIONES PARA APLICAR LAS REGLAS:
+// 1. Ve a Firebase Console: https://console.firebase.google.com/
+// 2. Selecciona tu proyecto: agenda-f1799
+// 3. Ve a Firestore Database
+// 4. Haz clic en la pestaña "Rules"
+// 5. Reemplaza todo el contenido con las reglas de arriba
+// 6. Haz clic en "Publish"

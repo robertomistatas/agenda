@@ -1,0 +1,20 @@
+// Reglas TEMPORALES de desarrollo para Firestore - Solo para DEBUG
+// IMPORTANTE: Estas reglas son menos seguras y solo deben usarse temporalmente
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Reglas temporales más permisivas para debugging
+    match /events/{eventId} {
+      // Permitir lectura y escritura para usuarios autenticados
+      allow read, write, create, update, delete: if request.auth != null;
+    }
+    
+    // Regla para la colección de usuarios
+    match /users/{userId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+
+// DESPUÉS DE CONFIRMAR QUE FUNCIONA, reemplaza con las reglas de firestore.rules
