@@ -38,8 +38,6 @@ jobs:
           
       - name: 📦 Setup Pages
         uses: actions/configure-pages@v4
-        with:
-          static_site_generator: create-react-app
           
       - name: 📋 Install dependencies
         run: npm ci
