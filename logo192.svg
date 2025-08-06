@@ -1,0 +1,10 @@
+<!-- SVG Icon 192x192 -->
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" fill="#184347" rx="24"/>
+  <rect x="24" y="36" width="144" height="24" rx="12" fill="#9BE4D2"/>
+  <rect x="24" y="72" width="120" height="18" rx="9" fill="#9BE4D2"/>
+  <rect x="24" y="102" width="96" height="18" rx="9" fill="#9BE4D2"/>
+  <rect x="24" y="132" width="72" height="18" rx="9" fill="#9BE4D2"/>
+  <circle cx="156" cy="156" r="24" fill="#9BE4D2"/>
+  <path d="M144 156h24M156 144v24" stroke="#184347" stroke-width="4" stroke-linecap="round"/>
+</svg>

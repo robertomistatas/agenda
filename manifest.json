@@ -1,0 +1,44 @@
+{
+  "short_name": "Mistatas",
+  "name": "Mistatas - Agenda Empresarial",
+  "description": "Gestiona tus reuniones y eventos empresariales",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#184347",
+  "background_color": "#F2EAE2",
+  "orientation": "portrait-primary",
+  "categories": ["business", "productivity"],
+  "lang": "es",
+  "scope": "/",
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "type": "image/png",
+      "sizes": "540x720",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "screenshot2.png",
+      "type": "image/png",
+      "sizes": "720x540",
+      "form_factor": "wide"
+    }
+  ]
+}
