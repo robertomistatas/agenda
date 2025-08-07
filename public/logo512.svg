@@ -1,0 +1,10 @@
+<!-- SVG Icon 512x512 -->
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#184347" rx="64"/>
+  <rect x="64" y="96" width="384" height="64" rx="32" fill="#9BE4D2"/>
+  <rect x="64" y="192" width="320" height="48" rx="24" fill="#9BE4D2"/>
+  <rect x="64" y="272" width="256" height="48" rx="24" fill="#9BE4D2"/>
+  <rect x="64" y="352" width="192" height="48" rx="24" fill="#9BE4D2"/>
+  <circle cx="416" cy="416" r="64" fill="#9BE4D2"/>
+  <path d="M384 416h64M416 384v64" stroke="#184347" stroke-width="12" stroke-linecap="round"/>
+</svg>

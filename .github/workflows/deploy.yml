@@ -9,21 +9,42 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Verify files exist
+      run: |
+        ls -la
+        ls -la public/
+        cat package.json | grep '"name"'
 
     - name: Install dependencies
-      run: npm install
+      run: npm ci
 
-    - name: Build
-      run: npm run build:ci
+    - name: Build application
+      run: |
+        export CI=false
+        npm run build
+      env:
+        CI: false
+        GENERATE_SOURCEMAP: false
 
-    - name: Deploy
+    - name: Verify build output
+      run: |
+        ls -la build/
+        test -f build/index.html && echo "Build successful!" || echo "Build failed!"
+
+    - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build
+        force_orphan: true
