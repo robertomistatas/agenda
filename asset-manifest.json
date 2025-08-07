@@ -1,11 +1,12 @@
 {
   "files": {
     "main.css": "/agenda/static/css/main.8c4312fa.css",
-    "main.js": "/agenda/static/js/main.80fed980.js",
+    "main.js": "/agenda/static/js/main.6e98e5b2.js",
+    "static/media/mistatas-logo.png": "/agenda/static/media/mistatas-logo.7c89d817c1ea0e958a70.png",
     "index.html": "/agenda/index.html"
   },
   "entrypoints": [
     "static/css/main.8c4312fa.css",
-    "static/js/main.80fed980.js"
+    "static/js/main.6e98e5b2.js"
   ]
 }
