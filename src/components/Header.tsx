@@ -1,6 +1,7 @@
 import React from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
+import mistatasLogo from '../assets/mistatas-logo.png';
 
 const Header: React.FC = () => {
   const handleSignOut = async () => {
@@ -17,7 +18,7 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <img 
-              src={`${process.env.PUBLIC_URL}/mistatas-logo.png`}
+              src={mistatasLogo}
               alt="MisTatas" 
               className="h-8 w-auto mr-3"
             />

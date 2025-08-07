@@ -3,6 +3,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { auth } from '../firebase';
+import mistatasLogo from '../assets/mistatas-logo.png';
 
 interface LoginFormData {
   email: string;
@@ -56,7 +57,7 @@ const Login: React.FC = () => {
         <div className="text-center mb-8">
           <div className="mx-auto mb-4 flex justify-center">
             <img 
-              src={`${process.env.PUBLIC_URL}/mistatas-logo.png`}
+              src={mistatasLogo}
               alt="MisTatas" 
               className="h-12 w-auto"
             />
