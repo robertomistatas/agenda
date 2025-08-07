@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.css": "/agenda/static/css/main.de8f6e9c.css",
-    "main.js": "/agenda/static/js/main.9ee80edb.js",
+    "main.css": "/agenda/static/css/main.bd4342c8.css",
+    "main.js": "/agenda/static/js/main.26e6d215.js",
     "static/media/mistatas-logo.png": "/agenda/static/media/mistatas-logo.7c89d817c1ea0e958a70.png",
     "index.html": "/agenda/index.html"
   },
   "entrypoints": [
-    "static/css/main.de8f6e9c.css",
-    "static/js/main.9ee80edb.js"
+    "static/css/main.bd4342c8.css",
+    "static/js/main.26e6d215.js"
   ]
 }
