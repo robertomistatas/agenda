@@ -56,7 +56,7 @@ const Login: React.FC = () => {
         <div className="text-center mb-8">
           <div className="mx-auto mb-4 flex justify-center">
             <img 
-              src="/mistatas-logo.png" 
+              src={`${process.env.PUBLIC_URL}/mistatas-logo.png`}
               alt="MisTatas" 
               className="h-12 w-auto"
             />

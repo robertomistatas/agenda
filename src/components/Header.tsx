@@ -17,7 +17,7 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <img 
-              src="/mistatas-logo.png" 
+              src={`${process.env.PUBLIC_URL}/mistatas-logo.png`}
               alt="MisTatas" 
               className="h-8 w-auto mr-3"
             />
