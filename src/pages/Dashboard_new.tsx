@@ -1,20 +1,25 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import Header from '../components/Header';
 import EventCard from '../components/EventCard';
 import EventForm from '../components/EventForm';
 import FloatingActionButton from '../components/FloatingActionButton';
+import NotificationSettings from '../components/NotificationSettings';
+import ElegantNotificationButton from '../components/ElegantNotificationButton';
+import ElegantNotificationSettingsButton from '../components/ElegantNotificationSettingsButton';
 import { useEvents } from '../hooks/useEvents';
+import { useNotifications } from '../hooks/useNotifications';
 import { useEventActions } from '../hooks/useEventActions';
 import { Event } from '../types';
 
 const Dashboard: React.FC = () => {
   const { events, loading, error } = useEvents();
+  const { permission } = useNotifications();
   const { deleteEvent } = useEventActions();
   const [showEventForm, setShowEventForm] = useState(false);
+  const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   const handleAddEvent = () => {
     setEditingEvent(null);
@@ -24,10 +29,6 @@ const Dashboard: React.FC = () => {
   const handleEditEvent = (event: Event) => {
     setEditingEvent(event);
     setShowEventForm(true);
-  };
-
-  const handleViewEvent = (event: Event) => {
-    setSelectedEvent(event);
   };
 
   const handleDeleteEvent = async (eventId: string) => {
@@ -88,12 +89,6 @@ const Dashboard: React.FC = () => {
             >
               Seguimiento de Clientes
             </Link>
-            <Link 
-              to="/configuraciones" 
-              className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-blue-400 font-medium pb-2 transition-colors duration-200"
-            >
-              Configuraciones
-            </Link>
           </div>
         </div>
       </nav>
@@ -109,6 +104,12 @@ const Dashboard: React.FC = () => {
               <p className="text-gray-600 dark:text-gray-400">
                 Gestiona tus reuniones y eventos empresariales
               </p>
+            </div>
+            
+            {/* Notification Controls */}
+            <div className="flex gap-2">
+              <ElegantNotificationButton />
+              <ElegantNotificationSettingsButton onOpenSettings={() => setShowNotificationSettings(true)} />
             </div>
           </div>
           
@@ -158,7 +159,6 @@ const Dashboard: React.FC = () => {
                 <EventCard 
                   key={event.id} 
                   event={event} 
-                  onClick={() => handleViewEvent(event)}
                   onEdit={handleEditEvent}
                   onDelete={handleDeleteEvent}
                 />
@@ -183,7 +183,6 @@ const Dashboard: React.FC = () => {
                 <EventCard 
                   key={event.id} 
                   event={event} 
-                  onClick={() => handleViewEvent(event)}
                   onEdit={handleEditEvent}
                   onDelete={handleDeleteEvent}
                 />
@@ -215,127 +214,13 @@ const Dashboard: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Event Details Modal */}
+      {/* Notification Settings Modal */}
       <AnimatePresence>
-        {selectedEvent && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setSelectedEvent(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 max-h-[80vh] overflow-y-auto"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                  Detalles de la Reunión
-                </h3>
-                <button
-                  onClick={() => setSelectedEvent(null)}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white text-lg">
-                    {selectedEvent.title}
-                  </h4>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {selectedEvent.clientName || selectedEvent.client}
-                  </p>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium text-gray-700 dark:text-gray-300">Fecha:</span>
-                    <p className="text-gray-600 dark:text-gray-400">{selectedEvent.date}</p>
-                  </div>
-                  <div>
-                    <span className="font-medium text-gray-700 dark:text-gray-300">Hora:</span>
-                    <p className="text-gray-600 dark:text-gray-400">{selectedEvent.time}</p>
-                  </div>
-                  {selectedEvent.platform && (
-                    <div>
-                      <span className="font-medium text-gray-700 dark:text-gray-300">Modalidad:</span>
-                      <p className="text-gray-600 dark:text-gray-400 capitalize">
-                        {selectedEvent.platform.replace('-', ' ')}
-                      </p>
-                    </div>
-                  )}
-                  {selectedEvent.status && (
-                    <div>
-                      <span className="font-medium text-gray-700 dark:text-gray-300">Estado:</span>
-                      <p className={`capitalize font-medium ${
-                        selectedEvent.status === 'confirmado' ? 'text-green-600' :
-                        selectedEvent.status === 'realizado' ? 'text-blue-600' :
-                        selectedEvent.status === 'cancelado' ? 'text-red-600' :
-                        'text-yellow-600'
-                      }`}>
-                        {selectedEvent.status}
-                      </p>
-                    </div>
-                  )}
-                </div>
-                
-                {selectedEvent.contactPerson && (
-                  <div>
-                    <span className="font-medium text-gray-700 dark:text-gray-300">Persona de Contacto:</span>
-                    <p className="text-gray-600 dark:text-gray-400">{selectedEvent.contactPerson}</p>
-                  </div>
-                )}
-                
-                {selectedEvent.notes && (
-                  <div>
-                    <span className="font-medium text-gray-700 dark:text-gray-300">Notas:</span>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">{selectedEvent.notes}</p>
-                  </div>
-                )}
-                
-                {selectedEvent.meetingLink && (
-                  <div>
-                    <span className="font-medium text-gray-700 dark:text-gray-300">Enlace de Reunión:</span>
-                    <a 
-                      href={selectedEvent.meetingLink} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 dark:text-blue-400 hover:underline block mt-1"
-                    >
-                      Unirse a la reunión
-                    </a>
-                  </div>
-                )}
-              </div>
-              
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={() => {
-                    setSelectedEvent(null);
-                    handleEditEvent(selectedEvent);
-                  }}
-                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={() => setSelectedEvent(null)}
-                  className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 px-4 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                >
-                  Cerrar
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
+        {showNotificationSettings && (
+          <NotificationSettings
+            show={showNotificationSettings}
+            onClose={() => setShowNotificationSettings(false)}
+          />
         )}
       </AnimatePresence>
     </div>

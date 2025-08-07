@@ -2,6 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import ClientTracking from './pages/ClientTracking';
+import Configuraciones from './pages/Configuraciones';
+import DiagnosticoPWA from './pages/DiagnosticoPWA';
 import InAppNotification from './components/InAppNotification';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { useAuth } from './hooks/useAuth';
@@ -40,6 +43,18 @@ function App() {
             <Route 
               path="/" 
               element={user ? <Dashboard /> : <Navigate to="/login" replace />} 
+            />
+            <Route 
+              path="/seguimiento" 
+              element={user ? <ClientTracking /> : <Navigate to="/login" replace />} 
+            />
+            <Route 
+              path="/configuraciones" 
+              element={user ? <Configuraciones /> : <Navigate to="/login" replace />} 
+            />
+            <Route 
+              path="/diagnostico" 
+              element={user ? <DiagnosticoPWA /> : <Navigate to="/login" replace />} 
             />
             <Route 
               path="*" 
