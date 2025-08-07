@@ -1,292 +1,281 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { usePWAComplete } from '../hooks/usePWAManager';
+import { useNavigate } from 'react-router-dom';
 
 const Configuraciones: React.FC = () => {
   const { notifications, pwa, setupComplete } = usePWAComplete();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isRequestingNotifications, setIsRequestingNotifications] = useState(false);
+  const [isTestingNotification, setIsTestingNotification] = useState(false);
   const [isSettingUp, setIsSettingUp] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Verificar tema actual
-    const isDark = document.documentElement.classList.contains('dark');
-    setIsDarkMode(isDark);
+    const theme = localStorage.getItem('theme');
+    setIsDarkMode(theme === 'dark');
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = !isDarkMode;
-    setIsDarkMode(newTheme);
-    
-    if (newTheme) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
+    const newTheme = isDarkMode ? 'light' : 'dark';
+    setIsDarkMode(!isDarkMode);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.classList.toggle('dark', !isDarkMode);
   };
 
   const handleCompleteSetup = async () => {
     setIsSettingUp(true);
     try {
-      const success = await setupComplete();
-      if (success) {
-        console.log('Setup PWA completado exitosamente');
+      console.log('Iniciando configuración completa...');
+      
+      // Verificar que todas las funciones estén disponibles
+      if (!notifications || !pwa || !setupComplete) {
+        throw new Error('Servicios PWA no disponibles');
+      }
+
+      // Ejecutar la configuración completa
+      const result = await setupComplete();
+      
+      if (result) {
+        alert('¡Configuración completada exitosamente! Tu aplicación PWA está lista.');
+      } else {
+        alert('Error en la configuración. Por favor, intenta nuevamente.');
       }
     } catch (error) {
-      console.error('Error en setup:', error);
+      console.error('Error en configuración completa:', error);
+      alert(`Error al completar la configuración: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     } finally {
       setIsSettingUp(false);
     }
   };
 
-  const getInstallButtonText = () => {
-    if (pwa.installState.installed) {
-      return '✅ App Instalada';
+  const handleRequestPermissions = async () => {
+    setIsRequestingNotifications(true);
+    try {
+      console.log('Solicitando permisos de notificación...');
+      
+      if (!notifications?.requestPermission) {
+        throw new Error('Función de permisos no disponible');
+      }
+
+      const result = await notifications.requestPermission();
+      
+      if (result) {
+        alert('¡Permisos de notificación habilitados correctamente!');
+      } else {
+        alert('Error al solicitar permisos. Por favor, intenta nuevamente.');
+      }
+    } catch (error) {
+      console.error('Error al solicitar permisos:', error);
+      alert(`Error al habilitar notificaciones: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    } finally {
+      setIsRequestingNotifications(false);
     }
-    if (pwa.installState.canInstall) {
-      return '📱 Instalar App';
-    }
-    if (pwa.installState.platform === 'ios') {
-      return '📱 Instalar (Safari → Compartir → Añadir a inicio)';
-    }
-    return '📱 Instalación no disponible';
   };
 
-  const getNotificationStatus = () => {
-    if (notifications.permission.granted) {
-      return { icon: '✅', text: 'Notificaciones Habilitadas', color: 'text-green-600 dark:text-green-400' };
+  const handleTestNotification = async () => {
+    setIsTestingNotification(true);
+    try {
+      console.log('Enviando notificación de prueba...');
+      
+      if (!notifications?.sendTestNotification) {
+        throw new Error('Función de notificación de prueba no disponible');
+      }
+
+      const result = await notifications.sendTestNotification();
+      
+      if (result) {
+        alert('¡Notificación de prueba enviada! Verifica tu dispositivo.');
+      } else {
+        alert('Error al enviar notificación. Por favor, intenta nuevamente.');
+      }
+    } catch (error) {
+      console.error('Error al enviar notificación:', error);
+      alert(`Error al enviar notificación de prueba: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    } finally {
+      setIsTestingNotification(false);
     }
-    if (notifications.permission.denied) {
-      return { icon: '❌', text: 'Notificaciones Bloqueadas', color: 'text-red-600 dark:text-red-400' };
-    }
-    return { icon: '⚠️', text: 'Permisos No Solicitados', color: 'text-yellow-600 dark:text-yellow-400' };
   };
 
-  const notificationStatus = getNotificationStatus();
+  const handleOpenDiagnostic = () => {
+    console.log('Navegando a diagnóstico...');
+    navigate('/diagnostico');
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F2EAE2] to-[#DDD6C7] dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
       <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
+        >
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+            ⚙️ Configuraciones PWA
+          </h1>
+          <p className="text-gray-600 dark:text-gray-300">
+            Gestiona la configuración de tu Aplicación Web Progresiva
+          </p>
+        </motion.div>
+
+        {/* PWA Setup Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 mb-6"
+          transition={{ delay: 0.1 }}
+          className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6"
         >
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
-            ⚙️ Configuraciones
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Personaliza tu experiencia con MisTatas
-          </p>
-
-          {/* Setup Completo PWA */}
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="bg-gradient-to-r from-[#184347] to-[#2a5f65] rounded-xl p-6 mb-6 text-white"
-          >
-            <h2 className="text-xl font-bold mb-3">🚀 Configuración Rápida PWA</h2>
-            <p className="mb-4 opacity-90">
-              Configura notificaciones e instalación con un solo clic
-            </p>
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            🚀 Configuración Inicial
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleCompleteSetup}
               disabled={isSettingUp}
-              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 px-6 py-3 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`p-4 rounded-lg border-2 transition-all duration-300 ${
+                isSettingUp
+                  ? 'border-gray-300 bg-gray-100 cursor-not-allowed'
+                  : 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-600 dark:bg-blue-900 dark:hover:bg-blue-800'
+              }`}
             >
-              {isSettingUp ? '⏳ Configurando...' : '🔧 Configurar Todo'}
-            </motion.button>
-          </motion.div>
-        </motion.div>
-
-        {/* Notificaciones */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 mb-6"
-        >
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-            🔔 Notificaciones
-          </h2>
-          
-          <div className="bg-white/40 dark:bg-gray-700/40 rounded-xl p-4 mb-4">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-2xl">{notificationStatus.icon}</span>
-              <span className={`font-semibold ${notificationStatus.color}`}>
-                {notificationStatus.text}
-              </span>
-            </div>
-            
-            <div className="flex flex-wrap gap-3">
-              {!notifications.permission.granted && (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={notifications.requestPermission}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                >
-                  🔔 Habilitar Notificaciones
-                </motion.button>
-              )}
-              
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={notifications.sendTestNotification}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-              >
-                🧪 Probar Notificación
-              </motion.button>
-            </div>
-          </div>
-
-          <div className="bg-white/40 dark:bg-gray-700/40 rounded-xl p-4">
-            <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
-              Recordatorios Automáticos
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
-              Recibe notificaciones antes de tus reuniones
-            </p>
-            <div className="flex gap-2">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => notifications.scheduleReminder(
-                  '📅 Recordatorio de Prueba',
-                  'Esta es una notificación de prueba programada',
-                  5000 // 5 segundos
+              <div className="flex items-center justify-center mb-2">
+                {isSettingUp ? (
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                ) : (
+                  <span className="text-3xl">✅</span>
                 )}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors"
-              >
-                ⏰ Probar en 5s
-              </motion.button>
-            </div>
+              </div>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                {isSettingUp ? 'Configurando...' : 'Configurar Todo'}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Configura automáticamente todas las funciones PWA
+              </p>
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleRequestPermissions}
+              disabled={isRequestingNotifications}
+              className={`p-4 rounded-lg border-2 transition-all duration-300 ${
+                isRequestingNotifications
+                  ? 'border-gray-300 bg-gray-100 cursor-not-allowed'
+                  : 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-600 dark:bg-green-900 dark:hover:bg-green-800'
+              }`}
+            >
+              <div className="flex items-center justify-center mb-2">
+                {isRequestingNotifications ? (
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+                ) : (
+                  <span className="text-3xl">🔔</span>
+                )}
+              </div>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                {isRequestingNotifications ? 'Habilitando...' : 'Habilitar Notificaciones'}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Solicita permisos para recibir notificaciones
+              </p>
+            </motion.button>
+          </div>
+
+          <div className="mt-4">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleTestNotification}
+              disabled={isTestingNotification}
+              className={`w-full p-4 rounded-lg border-2 transition-all duration-300 ${
+                isTestingNotification
+                  ? 'border-gray-300 bg-gray-100 cursor-not-allowed'
+                  : 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-600 dark:bg-purple-900 dark:hover:bg-purple-800'
+              }`}
+            >
+              <div className="flex items-center justify-center mb-2">
+                {isTestingNotification ? (
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                ) : (
+                  <span className="text-3xl">🧪</span>
+                )}
+              </div>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                {isTestingNotification ? 'Enviando...' : 'Probar Notificación'}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Envía una notificación de prueba
+              </p>
+            </motion.button>
           </div>
         </motion.div>
 
-        {/* Instalación PWA */}
+        {/* Theme Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6"
         >
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-            📱 Instalación de App
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            🎨 Tema y Personalización
           </h2>
           
-          <div className="bg-white/40 dark:bg-gray-700/40 rounded-xl p-4 mb-4">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h3 className="font-semibold text-gray-800 dark:text-white">
-                  Estado de la App
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Plataforma: {pwa.installState.platform}
-                </p>
-              </div>
-              <div className="text-right">
-                {pwa.installState.installed && (
-                  <span className="text-green-600 dark:text-green-400 font-medium">
-                    ✅ Instalada
-                  </span>
-                )}
-                {pwa.installState.canInstall && !pwa.installState.installed && (
-                  <span className="text-blue-600 dark:text-blue-400 font-medium">
-                    📱 Disponible
-                  </span>
-                )}
-              </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Modo Oscuro</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Cambia entre tema claro y oscuro
+              </p>
             </div>
-
-            {(pwa.installState.canInstall || pwa.installState.platform === 'ios') && (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={pwa.install}
-                disabled={pwa.installState.installed || pwa.installState.platform === 'ios'}
-                className="bg-[#184347] hover:bg-[#2a5f65] text-white px-6 py-3 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full"
-              >
-                {getInstallButtonText()}
-              </motion.button>
-            )}
-
-            {pwa.installState.platform === 'ios' && (
-              <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <p className="text-sm text-blue-800 dark:text-blue-200">
-                  <strong>En iOS Safari:</strong> Toca el botón Compartir (⬆️) y luego "Añadir a la pantalla de inicio"
-                </p>
-              </div>
-            )}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={toggleTheme}
+              className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors ${
+                isDarkMode ? 'bg-blue-600' : 'bg-gray-300'
+              }`}
+            >
+              <span
+                className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                  isDarkMode ? 'translate-x-8' : 'translate-x-1'
+                }`}
+              />
+            </motion.button>
           </div>
         </motion.div>
 
-        {/* Tema y Personalización */}
+        {/* Diagnostic Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
         >
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-            🎨 Personalización
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            🔍 Diagnóstico
           </h2>
           
-          <div className="bg-white/40 dark:bg-gray-700/40 rounded-xl p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold text-gray-800 dark:text-white">
-                  Tema Oscuro
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Cambia entre tema claro y oscuro
-                </p>
-              </div>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={toggleTheme}
-                className={`w-16 h-8 rounded-full p-1 transition-colors ${
-                  isDarkMode ? 'bg-blue-600' : 'bg-gray-300'
-                }`}
-              >
-                <div
-                  className={`w-6 h-6 bg-white rounded-full transition-transform ${
-                    isDarkMode ? 'translate-x-8' : 'translate-x-0'
-                  }`}
-                />
-              </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleOpenDiagnostic}
+            className="w-full p-4 rounded-lg border-2 border-orange-300 bg-orange-50 hover:bg-orange-100 dark:border-orange-600 dark:bg-orange-900 dark:hover:bg-orange-800 transition-all duration-300"
+          >
+            <div className="flex items-center justify-center mb-2">
+              <span className="text-3xl">🩺</span>
             </div>
-          </div>
-        </motion.div>
-
-        {/* Diagnóstico */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6"
-        >
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-            🔧 Diagnóstico y Soporte
-          </h2>
-          
-          <div className="bg-white/40 dark:bg-gray-700/40 rounded-xl p-4">
-            <p className="text-gray-600 dark:text-gray-300 mb-3">
-              Verifica el estado de la PWA y las notificaciones
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+              Abrir Diagnóstico
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Verifica el estado de todas las funciones PWA
             </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => window.location.href = '/agenda/#/diagnostico'}
-              className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
-            >
-              🔍 Abrir Diagnóstico
-            </motion.button>
-          </div>
+          </motion.button>
         </motion.div>
       </div>
     </div>

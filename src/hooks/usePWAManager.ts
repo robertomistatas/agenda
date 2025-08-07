@@ -107,52 +107,99 @@ export function useNotificationManager(): NotificationManager {
   const requestPermission = async (): Promise<boolean> => {
     try {
       if (!('Notification' in window)) {
-        console.error('Notificaciones no soportadas');
+        console.error('Notificaciones no soportadas en este navegador');
         return false;
       }
 
+      // Verificar si ya están concedidos
+      if (Notification.permission === 'granted') {
+        console.log('Permisos ya concedidos');
+        updatePermissionState();
+        return true;
+      }
+
+      // Verificar si fueron denegados permanentemente
+      if (Notification.permission === 'denied') {
+        console.warn('Permisos denegados permanentemente');
+        updatePermissionState();
+        return false;
+      }
+
+      console.log('Solicitando permisos de notificación...');
       const permission = await Notification.requestPermission();
       updatePermissionState();
 
       if (permission === 'granted') {
-        console.log('Permisos de notificación concedidos');
+        console.log('Permisos de notificación concedidos exitosamente');
         return true;
       } else {
-        console.log('Permisos de notificación denegados');
+        console.log('Permisos de notificación denegados por el usuario');
         return false;
       }
     } catch (error) {
-      console.error('Error solicitando permisos:', error);
+      console.error('Error solicitando permisos de notificación:', error);
       return false;
     }
   };
 
   const sendTestNotification = async (): Promise<boolean> => {
     try {
-      if (!permission.granted) {
-        const granted = await requestPermission();
-        if (!granted) return false;
+      // Verificar soporte
+      if (!('Notification' in window)) {
+        console.error('Notificaciones no soportadas en este navegador');
+        return false;
       }
 
-      // Notificación de prueba local
-      const notification = new Notification('🔔 Prueba de Notificación', {
-        body: 'Las notificaciones están funcionando correctamente en MisTatas',
+      // Verificar permisos
+      if (!permission.granted) {
+        console.log('Permisos no concedidos, solicitando...');
+        const granted = await requestPermission();
+        if (!granted) {
+          console.log('No se pudieron obtener permisos');
+          return false;
+        }
+      }
+
+      console.log('Enviando notificación de prueba...');
+
+      // Crear notificación con configuración robusta para Android
+      const notification = new Notification('🔔 Prueba de Notificación - MisTatas', {
+        body: 'Las notificaciones están funcionando correctamente en tu dispositivo',
         icon: '/agenda/logo192.svg',
         badge: '/agenda/logo192.svg',
         requireInteraction: true,
+        silent: false,
         vibrate: [200, 100, 200],
-        tag: 'test-notification',
-        actions: [
-          {
-            action: 'ok',
-            title: '✅ Perfecto'
-          }
-        ]
+        tag: 'test-notification-' + Date.now(),
+        timestamp: Date.now(),
+        data: {
+          type: 'test',
+          timestamp: Date.now()
+        }
       });
 
-      notification.onclick = () => {
+      // Manejar eventos de la notificación
+      notification.onclick = (event) => {
         console.log('Notificación de prueba clickeada');
+        event.preventDefault();
         notification.close();
+        
+        // Enfocar la ventana si está disponible
+        if (window.focus) {
+          window.focus();
+        }
+      };
+
+      notification.onclose = () => {
+        console.log('Notificación de prueba cerrada');
+      };
+
+      notification.onerror = (error) => {
+        console.error('Error en notificación de prueba:', error);
+      };
+
+      notification.onshow = () => {
+        console.log('Notificación de prueba mostrada exitosamente');
       };
 
       return true;
@@ -327,25 +374,61 @@ export function usePWAComplete() {
 
   const setupComplete = async (): Promise<boolean> => {
     try {
-      // 1. Solicitar permisos de notificación
-      const notificationGranted = await notifications.requestPermission();
+      console.log('🚀 Iniciando configuración PWA completa...');
+      let success = false;
       
-      // 2. Obtener token FCM
-      const token = await notifications.getToken();
+      // 1. Verificar soporte básico
+      const hasSW = 'serviceWorker' in navigator;
+      const hasNotifications = 'Notification' in window;
       
-      // 3. Verificar PWA
+      console.log('Verificación de soporte:', { serviceWorker: hasSW, notifications: hasNotifications });
+      
+      // 2. Solicitar permisos de notificación
+      if (hasNotifications) {
+        console.log('Solicitando permisos de notificación...');
+        const notificationGranted = await notifications.requestPermission();
+        console.log('Permisos de notificación:', notificationGranted ? 'concedidos' : 'denegados');
+        success = notificationGranted;
+      } else {
+        console.warn('Notificaciones no soportadas en este dispositivo');
+      }
+      
+      // 3. Intentar obtener token FCM (no crítico)
+      try {
+        console.log('Intentando obtener token FCM...');
+        const token = await notifications.getToken();
+        console.log('Token FCM:', token ? 'obtenido exitosamente' : 'no disponible');
+      } catch (tokenError) {
+        console.log('Token FCM no disponible (normal en desarrollo):', tokenError);
+      }
+      
+      // 4. Verificar estado de instalación PWA
+      console.log('Verificando instalabilidad PWA...');
       pwa.checkInstallability();
+      
+      // 5. Verificar Service Worker
+      if (hasSW) {
+        try {
+          const registration = await navigator.serviceWorker.getRegistration();
+          console.log('Service Worker:', registration ? 'registrado' : 'no registrado');
+        } catch (swError) {
+          console.warn('Error verificando Service Worker:', swError);
+        }
+      }
 
-      console.log('Setup PWA completo:', {
-        notifications: notificationGranted,
-        token: token ? 'obtenido' : 'no obtenido',
+      const finalStatus = {
+        notifications: success,
+        serviceWorker: hasSW,
         installable: pwa.installState.canInstall,
+        installed: pwa.installState.installed,
         platform: pwa.installState.platform
-      });
-
-      return notificationGranted;
+      };
+      
+      console.log('🎯 Setup PWA resultado final:', finalStatus);
+      return success;
+      
     } catch (error) {
-      console.error('Error en setup PWA:', error);
+      console.error('❌ Error crítico en setup PWA:', error);
       return false;
     }
   };
