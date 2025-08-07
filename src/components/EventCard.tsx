@@ -49,7 +49,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick, onEdit, onDelete 
     <motion.div
       whileHover={{ scale: 1.02, y: -2 }}
       whileTap={{ scale: 0.98 }}
-      className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-4 cursor-pointer border-l-4 border-accent relative"
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-4 cursor-pointer border-l-4 border-accent relative"
       onClick={onClick}
     >
       <div className="flex gap-4">
@@ -64,16 +64,48 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick, onEdit, onDelete 
         
         {/* Event Details */}
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-primary truncate">
-            {event.title}
-          </h3>
-          <p className="text-accent font-medium text-sm">
-            {event.client}
-          </p>
-          <p className="text-gray-600 text-sm mt-1 line-clamp-2">
-            {event.notes}
-          </p>
-          <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+          <div className="flex items-start justify-between">
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg font-semibold text-primary dark:text-white truncate">
+                {event.title}
+              </h3>
+              <div className="flex items-center gap-2 mt-1">
+                <p className="text-accent font-medium text-sm">
+                  {event.clientName || event.client}
+                </p>
+                {event.clientType && (
+                  <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 capitalize">
+                    {event.clientType}
+                  </span>
+                )}
+              </div>
+              {event.contactPerson && (
+                <p className="text-gray-500 dark:text-gray-400 text-xs">
+                  Contacto: {event.contactPerson}
+                </p>
+              )}
+            </div>
+            
+            {/* Status Badge */}
+            {event.status && (
+              <span className={`px-2 py-1 text-xs rounded-full font-medium ${
+                event.status === 'confirmado' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
+                event.status === 'realizado' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' :
+                event.status === 'cancelado' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' :
+                'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
+              }`}>
+                {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+              </span>
+            )}
+          </div>
+          
+          {event.notes && (
+            <p className="text-gray-600 dark:text-gray-400 text-sm mt-2 line-clamp-2">
+              {event.notes}
+            </p>
+          )}
+          
+          <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-gray-500 dark:text-gray-400">
             <span className="flex items-center gap-1">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
@@ -81,6 +113,26 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick, onEdit, onDelete 
               </svg>
               {event.time}
             </span>
+            
+            {event.platform && (
+              <span className="flex items-center gap-1">
+                {event.platform === 'presencial' ? (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                          d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
+                  </svg>
+                )}
+                {event.platform.charAt(0).toUpperCase() + event.platform.slice(1).replace('-', ' ')}
+              </span>
+            )}
+            
             {event.alertMinutesBefore > 0 && (
               <span className="flex items-center gap-1">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,6 +142,22 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick, onEdit, onDelete 
                 {event.alertMinutesBefore} min antes
               </span>
             )}
+            
+            {event.meetingLink && (
+              <a 
+                href={event.meetingLink} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-accent hover:text-accent/80 underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Unirse
+              </a>
+            )}
           </div>
         </div>
 
@@ -97,7 +165,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick, onEdit, onDelete 
         <div className="relative">
           <button
             onClick={toggleActions}
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
+            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
@@ -111,11 +179,11 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick, onEdit, onDelete 
                 initial={{ opacity: 0, scale: 0.95, y: -10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border py-1 z-10 min-w-[120px]"
+                className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-700 rounded-lg shadow-lg border dark:border-gray-600 py-1 z-10 min-w-[120px]"
               >
                 <button
                   onClick={handleEdit}
-                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
@@ -125,7 +193,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onClick, onEdit, onDelete 
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                  className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 

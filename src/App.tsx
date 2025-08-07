@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import InAppNotification from './components/InAppNotification';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { useAuth } from './hooks/useAuth';
 import { useNotifications } from './hooks/useNotifications';
 import './styles/globals.css';
@@ -23,35 +24,37 @@ function App() {
   }
 
   return (
-    <Router 
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true
-      }}
-    >
-      <div className="App">
-        <Routes>
-          <Route 
-            path="/login" 
-            element={user ? <Navigate to="/" replace /> : <Login />} 
+    <ThemeProvider>
+      <Router 
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
+        <div className="App">
+          <Routes>
+            <Route 
+              path="/login" 
+              element={user ? <Navigate to="/" replace /> : <Login />} 
+            />
+            <Route 
+              path="/" 
+              element={user ? <Dashboard /> : <Navigate to="/login" replace />} 
+            />
+            <Route 
+              path="*" 
+              element={<Navigate to="/" replace />} 
+            />
+          </Routes>
+          
+          {/* In-App Notifications */}
+          <InAppNotification 
+            notification={notification} 
+            onClose={clearNotification} 
           />
-          <Route 
-            path="/" 
-            element={user ? <Dashboard /> : <Navigate to="/login" replace />} 
-          />
-          <Route 
-            path="*" 
-            element={<Navigate to="/" replace />} 
-          />
-        </Routes>
-        
-        {/* In-App Notifications */}
-        <InAppNotification 
-          notification={notification} 
-          onClose={clearNotification} 
-        />
-      </div>
-    </Router>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 

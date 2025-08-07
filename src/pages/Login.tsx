@@ -46,12 +46,12 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-accent/20 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background to-accent/20 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md"
+        className="bg-primary/10 dark:bg-gray-800 backdrop-blur-sm rounded-lg shadow-xl p-8 w-full max-w-md border border-white/20 dark:border-gray-700"
       >
         {/* Logo and Title */}
         <div className="text-center mb-8">
@@ -62,14 +62,14 @@ const Login: React.FC = () => {
               className="h-12 w-auto"
             />
           </div>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-700 dark:text-gray-300">
             Agenda Empresarial
           </p>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             Gestiona tus reuniones corporativas
           </p>
           {error && (
-            <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="mt-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-400 rounded">
               {error}
             </div>
           )}
@@ -78,7 +78,7 @@ const Login: React.FC = () => {
         {/* Login Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Correo Electrónico
             </label>
             <input
@@ -91,16 +91,16 @@ const Login: React.FC = () => {
                   message: 'Email inválido'
                 }
               })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               placeholder="tu@empresa.com"
             />
             {errors.email && (
-              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+              <p className="text-red-500 dark:text-red-400 text-xs mt-1">{errors.email.message}</p>
             )}
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Contraseña
             </label>
             <input
@@ -113,11 +113,11 @@ const Login: React.FC = () => {
                   message: 'La contraseña debe tener al menos 6 caracteres'
                 }
               })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               placeholder="••••••••"
             />
             {errors.password && (
-              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+              <p className="text-red-500 dark:text-red-400 text-xs mt-1">{errors.password.message}</p>
             )}
           </div>
 
@@ -141,7 +141,7 @@ const Login: React.FC = () => {
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Acceso exclusivo para personal autorizado
           </p>
         </div>

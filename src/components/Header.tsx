@@ -1,6 +1,7 @@
 import React from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
+import ThemeToggle from './ThemeToggle';
 import mistatasLogo from '../assets/mistatas-logo.png';
 
 const Header: React.FC = () => {
@@ -13,7 +14,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-primary text-white shadow-lg">
+    <header className="bg-primary dark:bg-gray-800 text-white shadow-lg transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
@@ -28,6 +29,7 @@ const Header: React.FC = () => {
           </div>
           
           <div className="flex items-center space-x-4">
+            <ThemeToggle />
             <button
               onClick={handleSignOut}
               className="bg-primary-dark hover:bg-accent hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium"

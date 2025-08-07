@@ -5,8 +5,7 @@ import EventCard from '../components/EventCard';
 import EventForm from '../components/EventForm';
 import FloatingActionButton from '../components/FloatingActionButton';
 import NotificationSettings from '../components/NotificationSettings';
-import NotificationTestButton from '../components/NotificationTestButton';
-import ServiceWorkerTestButton from '../components/ServiceWorkerTestButton';
+import ElegantNotificationButton from '../components/ElegantNotificationButton';
 import { useEvents } from '../hooks/useEvents';
 import { useNotifications } from '../hooks/useNotifications';
 import { useEventActions } from '../hooks/useEventActions';
@@ -60,7 +59,7 @@ const Dashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background dark:bg-gray-900 transition-colors duration-300">
         <Header />
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -70,7 +69,7 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background dark:bg-gray-900 transition-colors duration-300">
       <Header />
       
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -78,24 +77,23 @@ const Dashboard: React.FC = () => {
         <div className="mb-8">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h2 className="text-2xl font-bold text-primary mb-2">
+              <h2 className="text-2xl font-bold text-primary dark:text-white mb-2">
                 Panel de Control
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 Gestiona tus reuniones y eventos empresariales
               </p>
             </div>
             
             {/* Notification Controls */}
             <div className="flex gap-2">
-              <NotificationTestButton />
-              <ServiceWorkerTestButton />
+              <ElegantNotificationButton />
               <button
                 onClick={() => setShowNotificationSettings(true)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   permission === 'granted' 
-                    ? 'bg-green-100 text-green-700 hover:bg-green-200' 
-                    : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
+                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50' 
+                    : 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 hover:bg-orange-200 dark:hover:bg-orange-900/50'
                 }`}
               >
                 <span className="text-lg">
@@ -110,7 +108,7 @@ const Dashboard: React.FC = () => {
           
           {/* Error Display */}
           {error && (
-            <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">
+            <div className="mt-4 p-4 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-400 rounded-md">
               <h4 className="font-medium">Error al cargar eventos:</h4>
               <p className="text-sm mt-1">{error}</p>
             </div>
@@ -119,7 +117,7 @@ const Dashboard: React.FC = () => {
 
         {/* Upcoming Events */}
         <section className="mb-8">
-          <h3 className="text-xl font-semibold text-primary mb-4 flex items-center">
+          <h3 className="text-xl font-semibold text-primary dark:text-white mb-4 flex items-center">
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                     d="M8 7V3a4 4 0 118 0v4M5 7h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z" />
@@ -128,17 +126,17 @@ const Dashboard: React.FC = () => {
           </h3>
           
           {upcomingEvents.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <div className="text-gray-400 mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 text-center transition-colors duration-300">
+              <div className="text-gray-400 dark:text-gray-600 mb-4">
                 <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                         d="M8 7V3a4 4 0 118 0v4M5 7h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z" />
                 </svg>
               </div>
-              <h4 className="text-lg font-medium text-gray-600 mb-2">
+              <h4 className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
                 No hay reuniones programadas
               </h4>
-              <p className="text-gray-500 mb-4">
+              <p className="text-gray-500 dark:text-gray-500 mb-4">
                 Agrega tu primera reunión para comenzar
               </p>
               <button
@@ -165,7 +163,7 @@ const Dashboard: React.FC = () => {
         {/* Past Events */}
         {pastEvents.length > 0 && (
           <section>
-            <h3 className="text-xl font-semibold text-primary mb-4 flex items-center">
+            <h3 className="text-xl font-semibold text-primary dark:text-white mb-4 flex items-center">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
