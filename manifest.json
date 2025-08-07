@@ -1,7 +1,7 @@
 {
-  "short_name": "Mistatas",
-  "name": "Mistatas - Agenda Empresarial",
-  "description": "Gestiona tus reuniones y eventos empresariales",
+  "short_name": "MisTatas",
+  "name": "MisTatas - Agenda Empresarial",
+  "description": "Gestiona tus reuniones y eventos empresariales de manera profesional",
   "icons": [
     {
       "src": "favicon.ico",
@@ -11,34 +11,106 @@
     {
       "src": "logo192.svg",
       "type": "image/svg+xml",
-      "sizes": "192x192"
+      "sizes": "72x72",
+      "purpose": "maskable"
+    },
+    {
+      "src": "logo192.svg",
+      "type": "image/svg+xml",
+      "sizes": "96x96",
+      "purpose": "any"
+    },
+    {
+      "src": "logo192.svg",
+      "type": "image/svg+xml",
+      "sizes": "128x128",
+      "purpose": "any"
+    },
+    {
+      "src": "logo192.svg",
+      "type": "image/svg+xml",
+      "sizes": "144x144",
+      "purpose": "any"
+    },
+    {
+      "src": "logo192.svg",
+      "type": "image/svg+xml",
+      "sizes": "152x152",
+      "purpose": "any"
+    },
+    {
+      "src": "logo192.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "logo192.svg",
+      "type": "image/svg+xml",
+      "sizes": "384x384",
+      "purpose": "any"
     },
     {
       "src": "logo512.svg",
       "type": "image/svg+xml",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any"
     }
   ],
-  "start_url": ".",
+  "start_url": "/agenda/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "theme_color": "#184347",
   "background_color": "#F2EAE2",
   "orientation": "portrait-primary",
-  "categories": ["business", "productivity"],
+  "categories": ["business", "productivity", "utilities"],
   "lang": "es",
-  "scope": "/",
+  "scope": "/agenda/",
+  "id": "/agenda/",
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "shortcuts": [
+    {
+      "name": "Nueva Reunión",
+      "short_name": "Nueva",
+      "description": "Crear una nueva reunión",
+      "url": "/agenda/#/nueva",
+      "icons": [
+        {
+          "src": "logo192.svg",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Ver Calendario",
+      "short_name": "Calendario",
+      "description": "Ver el calendario de eventos",
+      "url": "/agenda/#/calendario",
+      "icons": [
+        {
+          "src": "logo192.svg",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
   "screenshots": [
     {
       "src": "screenshot1.png",
       "type": "image/png",
       "sizes": "540x720",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "Vista principal de la agenda"
     },
     {
       "src": "screenshot2.png",
       "type": "image/png",
       "sizes": "720x540",
-      "form_factor": "wide"
+      "form_factor": "wide",
+      "label": "Vista del dashboard empresarial"
     }
   ]
 }
